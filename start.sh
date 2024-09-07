@@ -15,12 +15,10 @@ JAVA_FLAGS=(
 
 MINE_FLAGS=(
 	--nogui
-	--bonusChest
-	--port=1337 
 )
 
 while [ true ]; do
-	java ${JAVA_FLAGS[@]} -jar server.jar ${MINE_FLAGS[@]}
+	java ${JAVA_FLAGS[@]} -jar bin/paper.jar ${MINE_FLAGS[@]}
 	echo "Server restarting..."
 	echo "Press CTRL + C to stop."
 done

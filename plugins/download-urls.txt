@@ -1,0 +1,2 @@
+LuckPerms.jar=https://download.luckperms.net/1556/bukkit/loader/LuckPerms-Bukkit-5.4.141.jar
+AuthMe.jar=https://cdn.modrinth.com/data/3IEZ9vol/versions/tSRzJlf5/AuthMe-5.7.0-FORK-Universal.jar

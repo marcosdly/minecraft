@@ -19,4 +19,8 @@ MINE_FLAGS=(
 	--port=1337 
 )
 
-java ${JAVA_FLAGS[@]} -jar server-1.21.1.jar ${MINE_FLAGS[@]}
+while [ true ]; do
+	java ${JAVA_FLAGS[@]} -jar server.jar ${MINE_FLAGS[@]}
+	echo "Server restarting..."
+	echo "Press CTRL + C to stop."
+done

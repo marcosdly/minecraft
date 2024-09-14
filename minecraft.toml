@@ -1,0 +1,36 @@
+[java]
+flags = [
+  "-Xmx4G",
+  "-Xms1G",
+  "-XX:+UnlockExperimentalVMOptions",
+  "-XX:+UseZGC",
+  "-XX:-ZProactive",
+  "-XX:SoftMaxHeapSize=3G",
+]
+
+[game]
+main_jar = "bin/Paper.jar"
+flags = [
+  "--nogui",
+]
+
+[bin.Paper]
+url = "https://api.papermc.io/v2/projects/paper/versions/1.21.1/builds/64/downloads/paper-1.21.1-64.jar"
+hash = "e7e8eda5304baf207ed78d1037eb4adef5303073af471f123a456d6501616d91"
+
+[plugins.LuckPerms]
+url = "https://download.luckperms.net/1556/bukkit/loader/LuckPerms-Bukkit-5.4.141.jar"
+hash = "43228f0ba6a63bbfeccc9101d9f9eeed9da681f5182c8a8b72fc9d64ebf77e64"
+
+[plugins.EasyAuth]
+url = "https://cdn.modrinth.com/data/aZj58GfX/versions/8ZQEgc1i/easyauth-mc1.21-3.0.25.jar"
+hash = "bdd67d643f0dd88f8372483a5c8710ebf3b4755c918b7645e91cc83c164fbab3"
+
+[plugins.FabricAPI]
+url = "https://cdn.modrinth.com/data/P7dR8mSH/versions/qKPgBeHl/fabric-api-0.104.0%2B1.21.1.jar"
+hash = "b1aeaf90a9af7b5fd4069147bfb8b5bd4c66e4756248ae12fed776e2da694a1a"
+
+[plugins.ClothConfigAPI]
+url = "https://cdn.modrinth.com/data/9s6osm5g/versions/7jtvrmVP/cloth-config-15.0.130-fabric.jar"
+hash = "79d5a72d6fba3b3799ab69b87b4652d1a59eaffe555522cc2922552a965cb540"
+

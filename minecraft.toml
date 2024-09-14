@@ -9,7 +9,7 @@ flags = [
 ]
 
 [game]
-main_jar = "bin/Paper.jar"
+main_jar = "Paper.jar" # Relative to build directory
 flags = [
   "--nogui",
 ]

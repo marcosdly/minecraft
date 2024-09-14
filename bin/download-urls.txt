@@ -1,2 +1,0 @@
-velocity.jar=https://api.papermc.io/v2/projects/velocity/versions/3.3.0-SNAPSHOT/builds/428/downloads/velocity-3.3.0-SNAPSHOT-428.jar
-paper.jar=https://api.papermc.io/v2/projects/paper/versions/1.21.1/builds/64/downloads/paper-1.21.1-64.jar

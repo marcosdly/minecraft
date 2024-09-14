@@ -70,7 +70,7 @@ def main() -> None:
     java_flags = " ".join(config["java"]["flags"])
     game_flags = " ".join(config["game"]["flags"])
     game_bin = config["game"]["main_jar"]
-    script = f"#! /bin/sh\nexec java {java_flags} {game_bin} {game_flags}\n"
+    script = f"#! /bin/sh\nexec java {java_flags} -jar {game_bin} {game_flags}\n"
     with open(f"{build_dir}/start.sh", "wt") as script_file:
         script_file.write(script)
 

@@ -1,124 +1,79 @@
 #! python3
 
-# ruff: noqa
-
-from typing import Never, TypeAlias
-
 import hashlib
 import os
-import pathlib
-import logging
-import random
 import time
-from datetime import datetime, timedelta
-import urllib.request as request
+import sys
+import shutil
 import tomllib as toml
 
 
-MissingJars: TypeAlias = dict[str, list[str]]
-TIME_ONLY = "%H:%M:S"
+def make_ansi_delete_code(lines: int):
+    up = "\033[A"
+    clear_line = "\033[2K"
+    return (up + clear_line) * (lines + 1)
 
 
-def log(message):
-    """Logging utility"""
-    logging.debug(message)
-    print(message)
-
-
-def download_jars(config: dict, key: str, missing: list[str] = []) -> Never | None:
-    """
-    :param config Parsed TOML config dictionary
-    :param key    Key holding downloadable jar info (dict of dicts)
-    """
-    for basename, info in config[key].items():
-        path = f"./{key}/{basename}.jar"
-
-        if len(missing) > 0 and basename not in missing:
-            log(f"File {path} doesn't need to be downloaded, skipping")
-            continue
-
-        log(f"Downloading data for {basename}")
-        start = datetime.now()
-        with (
-            # request.urlopen(info["url"]) as jar_data,
-            open(path, "wb") as jar_file
-        ):
-            finish = datetime.now()
-            # data = jar_data.read()
-            data = bytes()
-            log(
-                f"Successfully downloaded data for {basename}, "
-                f"took {(finish - start).total_seconds()} seconds"
-            )
-            data_hash = hashlib.sha256(data).hexdigest()
-            if data_hash.strip() != info["hash"].strip():
-                log(f"Downloaded data's hash for '{basename}' is invalid, skipping")
-                continue
-            jar_file.write(data)
-        wait_time = random.randint(5, 15)
-        now = datetime.now()
-        next = now + timedelta(minutes=wait_time)
-        log(
-            f"Waiting {wait_time} minutes before downloading next file. "
-            f"Now: {now.strftime(TIME_ONLY)}, Download start: {next.strftime(TIME_ONLY)}"
-        )
-        time.sleep(wait_time * 60)
-
-
-def check_jars(config: dict, keys: list[str]) -> MissingJars:
-    """Check files and hashes validity.
-    :param  config Parsed TOML config
-    :param  keys   Keys to check for downloadable jar info
-    :return List of key-value pair tuples that point to jars that must be redownloaded
-    """
-    must_redownload = {k: [] for k in keys}
-    for dir in keys:
-        jars = list(pathlib.Path(dir).glob("*.jar"))
-        config_keys = [jar.stem for jar in jars]
-        for key, path in zip(config_keys, jars):
-            if not os.path.exists(path):
-                log(f"File {path} doesn't exists. Flagging for download")
-                must_redownload[dir].append(key)
-                continue
-
-            with path.open("rb") as file:
-                data = file.read()
-                if len(data) == 0:
-                    log(f"File {path} exists but has no data. Flagging for download")
-                    must_redownload[dir].append(key)
-                    continue
-
-                local_file_hash = hashlib.sha256(data).hexdigest()
-                expected_hash = config[key]["hash"]
-                if local_file_hash != expected_hash:
-                    log(f"File {path} has an invalid hash. Flagging for download")
-                    must_redownload[dir].append(key)
-                    continue
-
-            log(f"File {path} is valid")
-
-    return must_redownload
-
-
-def prepare() -> None:
-    logging.basicConfig(
-        filename="./minecraft.log",
-        encoding="utf-8",
-        level=logging.DEBUG,
-        format="%(asctime)s %(levelname)s:%(funcName)s %(message)s",
-    )
-
+def main() -> None:
     with open("./minecraft.toml", "rb") as config_file:
         config = toml.load(config_file)
 
     jar_dirs = ["bin", "plugins"]
     for dirname in jar_dirs:
         os.makedirs(dirname, exist_ok=True)
-    to_download = check_jars(config, jar_dirs)
-    print(to_download)
-    for dirname in jar_dirs:
-        download_jars(config, dirname, to_download[dirname])
+
+    # MAKE PRINTABLE TEXT
+    text_map = {}
+    for dir in jar_dirs:
+        for name, info in config[dir].items():
+            path = f"{dir}/{name}.jar"
+            text_map[path] = {
+                "url": info["url"],
+                "hash": info["hash"],
+                "valid": False,
+            }
+
+    # WAITING FOR VALID FILES
+    path_align: int = max(len(key) for key in text_map.keys())
+    ansi_delete = make_ansi_delete_code(len(text_map.keys()))
+
+    def check_hashes():
+        for path, info in text_map.items():
+            if not os.path.isfile(path):
+                continue
+            with open(path, "rb") as jar:
+                local_hash = hashlib.sha256(jar.read()).hexdigest()
+                if local_hash == info["hash"]:
+                    text_map[path]["valid"] = True
+
+    check_hashes()
+    while not all(info["valid"] for info in text_map.values()):
+        for path, info in text_map.items():
+            status = info["url"] if not info["valid"] else "OK"
+            print(f"{path.ljust(path_align)} :: {status}")
+        sys.stdout.flush()
+
+        check_hashes()
+        time.sleep(5)
+
+        print(ansi_delete)
+        sys.stdout.flush()
+
+    # COPYING FILES
+    build_dir = "./build"
+    shutil.rmtree(build_dir, ignore_errors=True)
+    shutil.copytree("./config", build_dir, dirs_exist_ok=True)
+    shutil.copytree("./bin", build_dir, dirs_exist_ok=True)
+    shutil.copytree("./plugins", f"{build_dir}/plugins", dirs_exist_ok=True)
+
+    # GENERATE START SCRIPT
+    java_flags = " ".join(config["java"]["flags"])
+    game_flags = " ".join(config["game"]["flags"])
+    game_bin = config["game"]["main_jar"]
+    script = f"#! /bin/sh\nexec java {java_flags} {game_bin} {game_flags}\n"
+    with open(f"{build_dir}/start.sh", "wt") as script_file:
+        script_file.write(script)
 
 
 if __name__ == "__main__":
-    prepare()
+    main()

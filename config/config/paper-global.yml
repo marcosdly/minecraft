@@ -1,0 +1,131 @@
+# Reference:
+#   PaperMC: https://docs.papermc.io/paper/reference/global-configuration
+
+_version: 29
+
+block-updates:
+  disable-noteblock-updates: false
+  disable-tripwire-updates: false
+
+chunk-loading-advanced:
+  # NOTE Changing server's player capacity will require a good look at this options
+  auto-config-send-distance: true
+  player-max-concurrent-chunk-generates: -1
+  player-max-concurrent-chunk-loads: -1
+
+chunk-loading-basic:
+  # NOTE Changing server's player capacity will require a good look at this options
+  player-max-chunk-generate-rate: -1.0
+  player-max-chunk-load-rate: 100
+  player-max-chunk-send-rate: -1
+
+chunk-system:
+  # NOTE Changing server's player capacity will require a good look at this options
+  gen-parallelism: default
+  io-threads: 2
+  worker-threads: 2
+
+collisions:
+  # This option can be broken by plugins interacting with the scoreboard.
+  # If you are having trouble with this option, try without plugins installed.
+  enable-player-collisions: false
+  # Having this enabled will use more bandwidth; however, in the majority
+  # of cases, this is a worthy tradeoff.
+  send-full-pos-for-hard-colliding-entities: true
+
+commands:
+  fix-target-selector-tag-completion: true
+  suggest-player-names-when-null-tab-completions: true
+  time-command-affects-all-worlds: false
+
+console:
+  enable-brigadier-completions: true
+  enable-brigadier-highlighting: true
+  has-all-permissions: false
+
+item-validation:
+  # Hard limits for hopefully some performance
+  display-name: 72
+  lore-line: 256
+  # Creative mode players may exploit this to cause a crash
+  resolve-selectors-in-books: false 
+  book:
+    author: 96
+    page: 512
+    title: 128
+  book-size:
+    page-max: 2560
+    total-multiplier: 0.98
+
+logging:
+  deobfuscate-stacktraces: true
+
+messages:
+  no-permission: <b><u><gold>SISTEMA:</gold></u></b> <i>Você não tem permissão para usar esse comando!</i>
+  use-display-name-in-quit-message: true
+  kick:
+    authentication-servers-down: <lang:multiplayer.disconnect.authservers_down>
+    connection-throttle: <aqua>Você tentou se conectar muitas vezes em um breve período de tempo.</aqua> <b>Espere um pouco e tente novamente.</b>
+    flying-player: <b><light_purple><u>SISTEMA:</u></light_purple></b> <i>Um jogador foi expulso após ser detectado voando.</i>
+    flying-vehicle: <b><light_purple><u>SISTEMA:</u></light_purple></b> <i>Um jogador foi expulso após ser detectado utilizando um <u>veículo voador</u>.</i>
+
+misc:
+  fix-entity-position-desync: true
+  load-permissions-yml-before-plugins: true
+  max-joins-per-tick: 1
+  region-file-cache-size: 256
+  use-alternative-luck-formula: false
+  use-dimension-type-for-custom-spawners: true
+  strict-advancement-dimension-check: false
+  chat-threads:
+    chat-executor-core-size: 2
+    chat-executor-max-size: -1
+  client-interaction-leniency-distance: default
+  compression-level: default # default is 6
+
+packet-limiter:
+  all-packets:
+    action: KICK
+    interval: 7.0
+    max-packet-rate: 500.0
+  kick-message: <b><u><light_purple>SISTEMA:</light_purple></u></b> <i>Um jogador foi expulso por realizar ações que geraram mais de 500 requisições ao servidor nos ultimos 7 segundos.</i>
+  overrides: ServerboundPlaceRecipePacket
+
+player-auto-save:
+  max-per-tick: 1 # save player data at 1 player per tick (.05 secs)
+  rate: 6000 # every 5 minutes
+
+scoreboards:
+  save-empty-scoreboard-teams: true
+  track-plugin-scoreboards: false
+
+spam-limiter:
+  incoming-packet-threshold: 300
+  recipe-spam-increment: 1
+  recipe-spam-limit: 20
+  tab-spam-increment: 1
+  tab-spam-limit: 500
+
+spam-limiter:
+  incoming-packet-threshold: 300
+  recipe-spam-increment: 1
+  recipe-spam-limit: 20 # TODO what is a recipe?
+  tab-spam-increment: 1
+  tab-spam-limit: 500
+
+spark:
+  enabled: true
+  enable-immediately: false
+
+# timings:
+#   enabled: false
+#   hidden-config-entries:
+#     - database
+#     - proxies.velocity.secret
+#   history-interval: 300
+#   history-length: 3600
+#   server-name: Unknown Server
+#   server-name-privacy: false
+#   url: https://timings.aikar.co
+#   verbose: true
+
